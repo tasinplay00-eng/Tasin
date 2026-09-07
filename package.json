@@ -1,0 +1,32 @@
+{
+  "name": "pulse-short-video-platform",
+  "version": "1.0.0",
+  "description": "Pulse: Production-ready short-video social media platform with User App and Admin Control Center powered by Supabase",
+  "private": true,
+  "scripts": {
+    "dev": "gradle assembleDebug",
+    "build": "gradle assembleRelease assembleDebug",
+    "lint": "gradle lint",
+    "test": "gradle :app:testDebugUnitTest",
+    "preview": "gradle assembleDebug",
+    "clean": "gradle clean",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:db:push": "supabase db push",
+    "supabase:db:reset": "supabase db reset"
+  },
+  "keywords": [
+    "short-video",
+    "social-media",
+    "android",
+    "jetpack-compose",
+    "supabase",
+    "admin-portal",
+    "clean-architecture"
+  ],
+  "author": "Pulse Platform",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

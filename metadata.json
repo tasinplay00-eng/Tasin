@@ -1,0 +1,6 @@
+{
+  "name": "Pulse",
+  "description": "A complete, production-ready short-video social media platform with user feed, creator tools, messaging, and a comprehensive role-based admin moderation panel.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

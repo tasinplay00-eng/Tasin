@@ -27,11 +27,13 @@ object SupabaseConfig {
 
     fun getUrl(): String {
         return customUrl?.takeIf { it.isNotBlank() }
+            ?: com.example.BuildConfig.SUPABASE_URL.takeIf { it.isNotBlank() }
             ?: "https://p5cxels6qrwyqs2tfwblun.supabase.co"
     }
 
     fun getAnonKey(): String {
         return customKey?.takeIf { it.isNotBlank() }
+            ?: com.example.BuildConfig.SUPABASE_ANON_KEY.takeIf { it.isNotBlank() }
             ?: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy_anon_key_for_pulse_platform"
     }
 

@@ -1,4 +1,6 @@
 import com.google.gms.googleservices.GoogleServicesPlugin.MissingGoogleServicesStrategy
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
   alias(libs.plugins.android.application)
@@ -21,6 +23,46 @@ android {
     versionName = "1.0"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+    // Load local environment properties from .env or .env.example
+    val envProps = Properties()
+    val envFile = rootProject.file(".env")
+    if (envFile.exists()) {
+      FileInputStream(envFile).use { fis -> envProps.load(fis) }
+    } else {
+      val envExample = rootProject.file(".env.example")
+      if (envExample.exists()) {
+        FileInputStream(envExample).use { fis -> envProps.load(fis) }
+      }
+    }
+
+    // Safely retrieve configuration values with precedence:
+    // 1. System environment variables (e.g., GitHub Actions Secrets)
+    // 2. Gradle project properties (-P or gradle.properties)
+    // 3. Local .env file
+    // 4. Default fallback string
+    fun getSecret(key: String, fallback: String = ""): String {
+      val fromEnv = System.getenv(key)
+      if (fromEnv != null && fromEnv.isNotBlank()) return fromEnv.trim()
+
+      val fromProp = project.findProperty(key) as? String
+      if (fromProp != null && fromProp.isNotBlank()) return fromProp.trim()
+
+      val fromDotEnv = envProps.getProperty(key)
+      if (fromDotEnv != null && fromDotEnv.isNotBlank()) return fromDotEnv.trim()
+
+      return fallback
+    }
+
+    val supabaseUrl = getSecret("SUPABASE_URL")
+    val supabaseAnonKey = getSecret("SUPABASE_ANON_KEY")
+    val geminiApiKey = getSecret("GEMINI_API_KEY")
+
+    // buildConfigField values MUST be valid Java string literals enclosed in quotes.
+    // Escaping ensures that empty strings ("") compile into valid Java rather than invalid empty expressions.
+    buildConfigField("String", "SUPABASE_URL", "\"${supabaseUrl.replace("\"", "\\\"")}\"")
+    buildConfigField("String", "SUPABASE_ANON_KEY", "\"${supabaseAnonKey.replace("\"", "\\\"")}\"")
+    buildConfigField("String", "GEMINI_API_KEY", "\"${geminiApiKey.replace("\"", "\\\"")}\"")
   }
 
   signingConfigs {
@@ -69,6 +111,9 @@ secrets {
   propertiesFileName = ".env"
   defaultPropertiesFileName = ".env.example"
   ignoreList.add("FIREBASE_APPCHECK_DEBUG_TOKEN")
+  ignoreList.add("SUPABASE_URL")
+  ignoreList.add("SUPABASE_ANON_KEY")
+  ignoreList.add("GEMINI_API_KEY")
 }
 
 googleServices { missingGoogleServicesStrategy = MissingGoogleServicesStrategy.WARN }
